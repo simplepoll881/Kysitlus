@@ -1,5 +1,5 @@
 
-
+<!DOCTYPE html>
 <html lang="et">
 <head>
 <meta charset="UTF-8">
@@ -54,15 +54,18 @@ button:hover { background: #3578c8; }
 async function createPoll() {
     const q = question.value.trim();
     const opts = [opt1.value, opt2.value, opt3.value].filter(x => x.trim());
+
     if (!q || opts.length < 2) {
         alert("Palun sisesta küsimus ja vähemalt 2 vastusevarianti.");
         return;
     }
+
     const r = await fetch("/create", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ question: q, options: opts })
     });
+
     const data = await r.json();
     window.location = "/view.html?id=" + data.pollId;
 }
@@ -70,4 +73,3 @@ async function createPoll() {
 
 </body>
 </html>
-
