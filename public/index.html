@@ -1,1 +1,73 @@
 
+
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<title>Loo küsitlus – SimplePoll</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6fa;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 450px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+h2 { text-align: center; }
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  font-size: 16px;
+}
+button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  font-size: 17px;
+  cursor: pointer;
+}
+button:hover { background: #3578c8; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>Loo uus küsitlus</h2>
+
+<input id="question" placeholder="Sisesta küsimus">
+<input id="opt1" placeholder="Vastusvariant 1">
+<input id="opt2" placeholder="Vastusvariant 2">
+<input id="opt3" placeholder="Vastusvariant 3 (valikuline)">
+<button onclick="createPoll()">Loo küsitlus</button>
+</div>
+
+<script>
+async function createPoll() {
+    const q = question.value.trim();
+    const opts = [opt1.value, opt2.value, opt3.value].filter(x => x.trim());
+    if (!q || opts.length < 2) {
+        alert("Palun sisesta küsimus ja vähemalt 2 vastusevarianti.");
+        return;
+    }
+    const r = await fetch("/create", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ question: q, options: opts })
+    });
+    const data = await r.json();
+    window.location = "/view.html?id=" + data.pollId;
+}
+</script>
+
+</body>
+</html>
+
