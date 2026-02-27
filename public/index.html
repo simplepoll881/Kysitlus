@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="et">
 <head>
@@ -67,6 +66,12 @@ async function createPoll() {
     });
 
     const data = await r.json();
+
+    if (!data.pollId) {
+        alert("Server ei loonud ID-d. Kontrollime koos!");
+        return;
+    }
+
     window.location = "/view.html?id=" + data.pollId;
 }
 </script>
