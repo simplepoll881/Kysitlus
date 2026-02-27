@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<title>Hääleta – SimplePoll</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6fa;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 450px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 12px;
+  font-size: 18px;
+  border-radius: 10px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover { background: #3578c8; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2 id="question"></h2>
+  <div id="options"></div>
+</div>
+<script>
+const id = new URLSearchParams(location.search).get("id");
+async function load() {
+  const r = await fetch("/poll/" + id);
+  const poll = await r.json();
+  question.textContent = poll.question;
+  options.innerHTML = poll.options.map((opt, i) =>
+    `<button onclick="vote(${i})">${opt}</button>`).join("");
+}
+async function vote(i) {
+  await fetch("/vote/" + id, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ index: i })
+  });
+  document.body.innerHTML = "<h2 style='text-align:center;'>Aitäh vastuse eest!</h2>";
+}
+load();
+</script>
+</body>
+</html>
