@@ -1,0 +1,40 @@
+
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tulemused – SimplePoll</title>
+<style>
+body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+.bar { background:#4a90e2; height:20px; margin:6px 0; }
+</style>
+</head>
+<body>
+
+<h2 id="question"></h2>
+<div id="results"></div>
+
+<script>
+const id = new URLSearchParams(location.search).get("id");
+
+async function load() {
+    const r = await fetch("/poll/" + id);
+    const poll = await r.json();
+    if (!poll) return;
+
+    question.textContent = poll.question;
+
+    const total = poll.votes.reduce((a,b)=>a+b,0);
+    results.innerHTML = poll.options.map((opt, i) => {
+        const pct = total ? Math.round(poll.votes[i] / total * 100) : 0;
+        return `<div>${opt} – ${pct}%</div>
+                <div class="bar" style="width:${pct}%;"></div>`;
+    }).join("");
+}
+
+setInterval(load, 1000);
+load();
+</script>
+
+</body>
+</html>
