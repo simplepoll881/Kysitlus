@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hääleta – SimplePoll</title>
+<style>
+body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+button { padding: 15px; width: 100%; margin-top: 10px; font-size: 18px; }
+</style>
+</head>
+<body>
+
+<h2 id="question"></h2>
+<div id="options"></div>
+
+<script>
+const id = new URLSearchParams(location.search).get("id");
+
+async function load() {
+    const r = await fetch("/poll/" + id);
+    const poll = await r.json();
+    if (!poll) return;
+
+    question.textContent = poll.question;
+
+    options.innerHTML = poll.options.map((opt, i) =>
+        `<button onclick="vote(${i})">${opt}</button>`
+    ).join("");
+}
+
+async function vote(i) {
+    await fetch("/vote/" + id, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ index: i })
+    });
+    document.body.innerHTML = "<h2>Aitäh vastuse eest!</h2>";
+}
+
+load();
+</script>
+</body>
+</html>
