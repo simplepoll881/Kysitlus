@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<title>Tulemused – SimplePoll</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f4f6fa; padding: 40px; }
+.container {
+  background: white; padding: 30px; border-radius: 12px;
+  max-width: 600px; margin: auto; box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+.bar {
+  height: 22px; background: linear-gradient(90deg, #4a90e2, #6ab0ff);
+  margin: 8px 0; border-radius: 8px; transition: width 0.4s ease;
+}
+.label { font-weight: bold; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2 id="question"></h2>
+  <div id="results"></div>
+</div>
+<script>
+const id = new URLSearchParams(location.search).get("id");
+async function load() {
+  const r = await fetch("/poll/" + id);
+  const poll = await r.json();
+  if (!poll) return;
+  question.textContent = poll.question;
+  const total = poll.votes.reduce((a,b)=>a+b,0);
+  results.innerHTML = poll.options.map((opt, i) => {
+    const pct = total ? Math.round(poll.votes[i] / total * 100) : 0;
+    return `<div class='label'>${opt} – ${pct}%</div>
+            <div class='bar' style='width:${pct}%;'></div>`;
+  }).join("");
+}
+setInterval(load, 800);
+load();
+</script>
+</body>
+</html>
