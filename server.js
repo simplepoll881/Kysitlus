@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const polls = {};
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.post('/create',(req,res)=>{const id=Math.random().toString(36).substring(2,8); polls[id]={question:req.body.question,options:req.body.options,votes:Array(req.body.options.length).fill(0)}; res.json({pollId:id});});
 app.post('/vote/:id',(req,res)=>{const poll=polls[req.params.id]; if(!poll) return res.status(404).end(); poll.votes[req.body.index]++; res.json({ok:true});});
